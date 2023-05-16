@@ -42,7 +42,7 @@ param location string = resourceGroup().location
 param vmName string = 'devopsagent'
 
 @description('Indicator to guide whether the CI/CD agent script should be run or not')
-param deployAgent bool=false
+param deployAgent bool=true
 
 @description('The Azure DevOps or GitHub account name')
 param accountName string=''
@@ -62,7 +62,7 @@ param CICDAgentType string='azuredevops'
 
 var AgentName = 'agent-${vmName}'
 
-param artifactsLocation string = 'https://raw.githubusercontent.com/Azure/apim-landing-zone-accelerator/main/reference-implementations/AppGW-IAPIM-Func/bicep/shared/agentsetup.ps1'
+param artifactsLocation string = 'https://raw.githubusercontent.com/RobertoBorges/devopsagent/master/agentsetup.ps1'
 
 var storageAccountName = 'bootdiags${uniqueString(resourceGroup().id)}'
 var nicName = 'myVMNic'

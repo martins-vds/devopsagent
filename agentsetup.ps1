@@ -59,9 +59,9 @@ function setupazdevops{
     #expand the zip
     Expand-Archive -Path agent.zip -DestinationPath $PWD
     
-    Write-Output "--unattended --url $URL --auth pat --token "$PAT" --pool $POOL --agent $AGENT --acceptTeeEula --runAsService"
+    Write-Output "--unattended --url https://dev.azure.com/$URL --auth pat --token "$PAT" --pool $POOL --agent $AGENT --acceptTeeEula --runAsService"
     #run the config script of the build agent
-    .\config.cmd --unattended --url $URL --auth pat --token "$PAT" --pool $POOL --agent $AGENT --acceptTeeEula --runAsService --replace
+    .\config.cmd --unattended --url https://dev.azure.com/$URL --auth pat --token "$PAT" --pool $POOL --agent $AGENT --acceptTeeEula --runAsService --replace
     
     Write-Host "About to start Azure DevOps Agent"
     set-location $azagentdir
@@ -127,7 +127,7 @@ Expand-Archive -Path ghactionsrunner.zip -DestinationPath $PWD
 
 #run the config script of the build agent
 set-location $ghrunnerdirectory
-.\config.cmd --unattended --url $URL  --token "$PAT"  --runnergroup $POOL  --replace --runasservice --replace
+.\config.cmd --unattended --url https://github.com/$URL  --token "$PAT"  --runnergroup $POOL  --replace --runasservice --replace
 
 
 
