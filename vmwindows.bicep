@@ -64,22 +64,12 @@ var AgentName = 'agent-${vmName}'
 
 param artifactsLocation string = 'https://raw.githubusercontent.com/RobertoBorges/devopsagent/master/agentsetup.ps1'
 
-var storageAccountName = 'bootdiags${uniqueString(resourceGroup().id)}'
 var nicName = 'myVMNic'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
 var virtualNetworkName = 'MyVNET'
 var networkSecurityGroupName = 'default-NSG'
-
-resource stg 'Microsoft.Storage/storageAccounts@2021-04-01' = {
-  name: storageAccountName
-  location: location
-  sku: {
-    name: 'Standard_LRS'
-  }
-  kind: 'Storage'
-}
 
 resource pip 'Microsoft.Network/publicIPAddresses@2021-02-01' = {
   name: publicIpName
@@ -203,8 +193,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
     }
     diagnosticsProfile: {
       bootDiagnostics: {
-        enabled: true
-        storageUri: stg.properties.primaryEndpoints.blob
+        enabled: false
       }
     }
   }
