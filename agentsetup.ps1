@@ -68,10 +68,10 @@ function setupazdevops{
     $servicename=(Get-Content .service)
     Start-Service $servicename -ErrorAction SilentlyContinue
     
-    Enable-WindowsOptionalFeature -Online -FeatureName containers –All
+    Enable-WindowsOptionalFeature -Online -FeatureName containers -All
 
     $ConfirmPreference = 'None'
-    
+
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 
     Install-Module -Name DockerMsftProvider -Repository PSGallery -Force
