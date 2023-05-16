@@ -68,16 +68,21 @@ function setupazdevops{
     $servicename=(Get-Content .service)
     Start-Service $servicename -ErrorAction SilentlyContinue
     
-    Enable-WindowsOptionalFeature -Online -FeatureName containers -All
+    dism /online /enable-feature /featurename:containers /All /Quiet /NoRestart
 
     $ConfirmPreference = 'None'
 
-    #Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 
-    #Install-Module -Name DockerMsftProvider -Repository PSGallery -Force
+    Install-Module -Name DockerMsftProvider -Repository PSGallery -Force
 
-    Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
-    
+    Install-Package -Name docker -ProviderName DockerMsftProvider -Force
+
+    wsl --install
+
+    wsl --install -d Ubuntu-22.04
+
+    dism /online /enable-feature /featurename:Microsoft-Hyper-V /All /Quiet
 
     #exit
     Stop-Transcript

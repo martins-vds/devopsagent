@@ -28,9 +28,9 @@ param publicIpSku string = 'Basic'
 
 @description('The Windows version for the VM. This will pick a fully patched image of this given Windows version.')
 @allowed([
-  '2022-datacenter-azure-edition-core'
+  'vs-2022-ent-latest-ws2022'
 ])
-param OSVersion string = '2022-datacenter-azure-edition-core'
+param OSVersion string = 'vs-2022-ent-latest-ws2022'
 
 @description('Size of the virtual machine.')
 param vmSize string = 'Standard_D4s_v3'
@@ -165,8 +165,8 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
     }
     storageProfile: {
       imageReference: {
-        publisher: 'MicrosoftWindowsServer'
-        offer: 'WindowsServer'
+        publisher: 'microsoftvisualstudio'
+        offer: 'visualstudio2022'
         sku: OSVersion
         version: 'latest'
       }
