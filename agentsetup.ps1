@@ -78,10 +78,6 @@ function setupazdevops{
 
     Install-Package -Name docker -ProviderName DockerMsftProvider -Force
 
-    wsl --install
-
-    wsl --install -d Ubuntu-22.04
-
     dism /online /enable-feature /featurename:Microsoft-Hyper-V /All /Quiet
 
     #exit
