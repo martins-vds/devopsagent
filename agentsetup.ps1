@@ -72,9 +72,9 @@ function setupazdevops{
 
     $ConfirmPreference = 'None'
 
-    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+    #Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 
-    Install-Module -Name DockerMsftProvider -Repository PSGallery -Force
+    #Install-Module -Name DockerMsftProvider -Repository PSGallery -Force
 
     Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
     
