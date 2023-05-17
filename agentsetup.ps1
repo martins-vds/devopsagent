@@ -67,20 +67,14 @@ function setupazdevops{
     set-location $azagentdir
     $servicename=(Get-Content .service)
     Start-Service $servicename -ErrorAction SilentlyContinue
-    
-    dism /online /enable-feature /featurename:containers /All /Quiet /NoRestart
+
+    $ConfirmPreference = 'None'
 
     $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; Remove-Item .\AzureCLI.msi
     
-    $ConfirmPreference = 'None'
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
-    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-
-    Install-Module -Name DockerMsftProvider -Repository PSGallery -Force
-
-    Install-Package -Name docker -ProviderName DockerMsftProvider -Force
-
-    dism /online /enable-feature /featurename:Microsoft-Hyper-V /All /Quiet
+    choco install git -y
 
     #exit
     Stop-Transcript
