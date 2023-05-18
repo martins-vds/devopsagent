@@ -14,10 +14,25 @@ function setupazdevops{
         [string]$AGENT
     )
     
-    Write-Host "About to setup Azure DevOps Agent"
+        
+    Write-Host "About to install components"
     Start-Transcript
     Write-Host "start"
-      
+
+    $ConfirmPreference = 'None'
+
+    $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; Remove-Item .\AzureCLI.msi
+    
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+    choco install git -y
+
+    choco install openjdk -y
+
+    choco install nodejs.install -y
+
+    Write-Host "About to setup Azure DevOps Agent"
+
     $azagentdir="c:\agent"
     
     #test if an old installation exists, if so, delete the folder
@@ -67,14 +82,6 @@ function setupazdevops{
     set-location $azagentdir
     $servicename=(Get-Content .service)
     Start-Service $servicename -ErrorAction SilentlyContinue
-
-    $ConfirmPreference = 'None'
-
-    $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; Remove-Item .\AzureCLI.msi
-    
-    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-
-    choco install git -y
 
     #exit
     Stop-Transcript
