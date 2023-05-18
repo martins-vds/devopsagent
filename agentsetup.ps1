@@ -25,9 +25,27 @@ function setupazdevops{
     
     Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
-    choco install openjdk -y
+    choco install oraclejdk -y
 
     choco install nodejs.install -y
+
+    npm install --global @cyclonedx/cyclonedx-npm
+
+    # Get npm prefix path
+    $npmPrefix = npm config get prefix
+
+    # Get current PATH
+    $currentPath = [Environment]::GetEnvironmentVariable("Path", "Machine")
+
+    # Check if npmPrefix is not already in PATH
+    if ($currentPath -notlike "*$npmPrefix*")
+    {
+        # Append npm prefix to PATH
+        $newPath = $currentPath + ";" + $npmPrefix
+
+        # Set new PATH
+        [Environment]::SetEnvironmentVariable("Path", $newPath, "Machine")
+    }
 
     Write-Host "About to setup Azure DevOps Agent"
 
