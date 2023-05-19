@@ -29,24 +29,6 @@ function setupazdevops{
 
     choco install nodejs.install -y
 
-    npm install --global @cyclonedx/cyclonedx-npm
-
-    # Get npm prefix path
-    $npmPrefix = npm config get prefix
-
-    # Get current PATH
-    $currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
-
-    # Check if npmPrefix is not already in PATH
-    if ($currentPath -notlike "*$npmPrefix*")
-    {
-        # Append npm prefix to PATH
-        $newPath = $currentPath + ";" + $npmPrefix
-
-        # Set new PATH
-        [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
-    }
-
     Write-Host "About to setup Azure DevOps Agent"
 
     $azagentdir="c:\agent"
