@@ -35,7 +35,7 @@ function setupazdevops{
     $npmPrefix = npm config get prefix
 
     # Get current PATH
-    $currentPath = [Environment]::GetEnvironmentVariable("Path", "Machine")
+    $currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
 
     # Check if npmPrefix is not already in PATH
     if ($currentPath -notlike "*$npmPrefix*")
@@ -44,7 +44,7 @@ function setupazdevops{
         $newPath = $currentPath + ";" + $npmPrefix
 
         # Set new PATH
-        [Environment]::SetEnvironmentVariable("Path", $newPath, "Machine")
+        [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
     }
 
     Write-Host "About to setup Azure DevOps Agent"
