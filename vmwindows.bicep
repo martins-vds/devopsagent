@@ -205,9 +205,9 @@ resource vm_CustomScript 'Microsoft.Compute/virtualMachines/extensions@2021-04-0
   name: 'CustomScript'
   location: location
   properties: {
-    publisher: 'Microsoft.Compute'
-    type: 'CustomScriptExtension'
-    typeHandlerVersion: '1.10'
+    publisher: 'Microsoft.Azure.Extensions'
+    type: 'CustomScript'
+    typeHandlerVersion: '2.1'
     autoUpgradeMinorVersion: true
     settings: {
       skipDos2Unix: false
