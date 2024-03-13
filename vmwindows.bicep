@@ -207,7 +207,7 @@ resource vm_CustomScript 'Microsoft.Compute/virtualMachines/extensions@2021-04-0
   properties: {
     publisher: 'Microsoft.Compute'
     type: 'CustomScriptExtension'
-    typeHandlerVersion: '2.1'
+    typeHandlerVersion: '1.10'
     autoUpgradeMinorVersion: true
     settings: {
       skipDos2Unix: false
