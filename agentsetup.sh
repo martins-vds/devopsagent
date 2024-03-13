@@ -20,7 +20,7 @@ setup_az_devops() {
 
     # Install JDK and Node.js
     sudo apt-get update
-    
+
     sudo apt-get install -y openjdk-11-jdk
 
     sudo apt install apt-transport-https ca-certificates curl software-properties-common
@@ -35,7 +35,8 @@ setup_az_devops() {
 
     sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 
-    source ~/.bashrc
+    export NVM_DIR="$HOME/.nvm" 
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
     nvm install v20.11.1
 
@@ -55,7 +56,7 @@ setup_az_devops() {
     fi
 
     echo "Creating directory"
-    mkdir -p $azagentdir
+    sudo mkdir -p $azagentdir
     cd $azagentdir
 
     # Get the latest build agent version

@@ -219,7 +219,7 @@ resource vm_CustomScript 'Microsoft.Compute/virtualMachines/extensions@2021-04-0
       fileUris: [
         artifactsLocation
       ]               
-      commandToExecute: 'chmod +x agentsetup.sh | sudo ./agentsetup.sh ${accountName} ${personalAccessToken} ${poolName} ${AgentName} ${CICDAgentType} '
+      commandToExecute: 'chmod +x agentsetup.sh | ./agentsetup.sh ${accountName} ${personalAccessToken} ${poolName} ${AgentName} ${CICDAgentType} '
     }
   }
 }
