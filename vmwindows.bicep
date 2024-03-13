@@ -28,9 +28,9 @@ param publicIpSku string = 'Basic'
 
 @description('The Windows version for the VM. This will pick a fully patched image of this given Windows version.')
 @allowed([
-  'vs-2022-ent-latest-ws2022'
+  '20_04-lts-gen2'
 ])
-param OSVersion string = 'vs-2022-ent-latest-ws2022'
+param OSVersion string = '20_04-lts-gen2'
 
 @description('Size of the virtual machine.')
 param vmSize string = 'Standard_D4s_v3'
@@ -165,8 +165,8 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
     }
     storageProfile: {
       imageReference: {
-        publisher: 'microsoftvisualstudio'
-        offer: 'visualstudio2022'
+        publisher: 'canonical'
+        offer: '0001-com-ubuntu-server-focal'
         sku: OSVersion
         version: 'latest'
       }
