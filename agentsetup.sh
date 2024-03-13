@@ -20,7 +20,8 @@ setup_az_devops() {
 
     # Install JDK and Node.js
     sudo apt-get update
-    sudo apt-get install -y openjdk-11-jdk nodejs npm
+    
+    sudo apt-get install -y openjdk-11-jdk
 
     sudo apt install apt-transport-https ca-certificates curl software-properties-common
 
@@ -28,12 +29,18 @@ setup_az_devops() {
 
     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
 
-    apt-cache policy docker-ce
+    apt-cache policy docker-ce -y
 
-    sudo apt install docker-ce
+    sudo apt install docker-ce -y
 
-    sudo systemctl status docker
-    
+    sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+
+    source ~/.bashrc
+
+    nvm install v20.11.1
+
+    sudo npm install -g npm@6.14.4
+
     echo "About to setup Azure DevOps Agent"
     azagentdir="/agent"
 
@@ -66,8 +73,13 @@ setup_az_devops() {
     ./config.sh --unattended --url "https://dev.azure.com/$URL" --auth pat --token "$PAT" --pool "$POOL" --agent "$AGENT" --acceptTeeEula --runAsService --replace
 
     echo "About to start Azure DevOps Agent"
-    ./svc.sh install
-    ./svc.sh start
+    sudo ./svc.sh install
+    sudo ./svc.sh start
+
+    sudo usermod -aG docker $USER
+
+    newgrp docker
+
 }
 
 setup_gh_runner() {

@@ -62,7 +62,7 @@ param CICDAgentType string='azuredevops'
 
 var AgentName = 'agent-${vmName}'
 
-param artifactsLocation string = 'https://raw.githubusercontent.com/RobertoBorges/devopsagent/master/agentsetup.ps1'
+param artifactsLocation string = 'https://raw.githubusercontent.com/RobertoBorges/devopsagent/linuxvr/agentsetup.sh'
 
 var nicName = 'myVMNic'
 var addressPrefix = '10.0.0.0/16'
@@ -91,12 +91,12 @@ resource securityGroup 'Microsoft.Network/networkSecurityGroups@2021-02-01' = {
   properties: {
     securityRules: [
       {
-        name: 'default-allow-3389'
+        name: 'default-allow-22'
         properties: {
           priority: 1000
           access: 'Allow'
           direction: 'Inbound'
-          destinationPortRange: '3389'
+          destinationPortRange: '22'
           protocol: 'Tcp'
           sourcePortRange: '*'
           sourceAddressPrefix: '*'
@@ -207,14 +207,19 @@ resource vm_CustomScript 'Microsoft.Compute/virtualMachines/extensions@2021-04-0
   properties: {
     publisher: 'Microsoft.Compute'
     type: 'CustomScriptExtension'
-    typeHandlerVersion: '1.10'
+    typeHandlerVersion: '2.1'
+    autoUpgradeMinorVersion: true
     settings: {
+      skipDos2Unix: false
       fileUris: [
         artifactsLocation
       ]   
     }
     protectedSettings: {
-      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -Command ./agentsetup.ps1 -url ${accountName} -pat ${personalAccessToken} -agent ${AgentName} -pool ${poolName} -agenttype ${CICDAgentType} '
+      fileUris: [
+        artifactsLocation
+      ]               
+      commandToExecute: 'chmod +x agentsetup.sh | sudo ./agentsetup.sh ${accountName} ${personalAccessToken} ${poolName} ${AgentName} ${CICDAgentType} '
     }
   }
 }
