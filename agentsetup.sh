@@ -53,10 +53,12 @@ setup_az_devops() {
     tar -zxvf agent.tar.gz
 
     # Run the config script of the build agent
-    echo "Configuring Azure DevOps Agent"
-    ./config.sh --unattended --url "https://dev.azure.com/$URL" --auth pat --token "$PAT" --pool "$POOL" --agent "$AGENT" --acceptTeeEula --runAsService --replace
+    echo "Configuring the Azure DevOps Agent"
+
+    sudo -u LabUser ./config.sh --unattended --url "https://dev.azure.com/$URL" --auth pat --token "$PAT" --pool "$POOL" --agent "$AGENT" --acceptTeeEula --runAsService --replace
 
     echo "About to start Azure DevOps Agent"
+
     sudo ./svc.sh install
     sudo ./svc.sh start
 
