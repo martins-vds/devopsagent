@@ -175,6 +175,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
         managedDisk: {
           storageAccountType: 'StandardSSD_LRS'
         }
+        diskSizeGB: 256
       }
       dataDisks: [
         {
