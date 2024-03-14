@@ -26,21 +26,14 @@ setup_az_devops() {
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
     echo "About to setup Azure DevOps Agent"
-    azagentdir="/agent"
-
-    # Test if an old installation exists, if so, delete the folder
-    if [ -d "$azagentdir" ]; then
-        echo "Cleaning out old directory"
-        cd $azagentdir
-        servicename=$(cat .service)
-        sudo systemctl stop $servicename
-        cd /
-        sudo rm -rf $azagentdir
-    fi
 
     echo "Creating directory"
-    sudo mkdir -p $azagentdir
-    cd $azagentdir
+    sudo mkdir -p "/agent"
+    sudo mkdir -p "/agent1"
+    sudo mkdir -p "/agent2"
+    sudo mkdir -p "/agent3"
+    sudo mkdir -p "/agent4"                
+    cd "/agent"
 
     # Get the latest build agent version
     echo "Downloading agent"
@@ -52,6 +45,11 @@ setup_az_devops() {
     # Expand the tarball
     tar -zxvf agent.tar.gz
 
+    cp -rp * /agent1
+    cp -rp * /agent2
+    cp -rp * /agent3
+    cp -rp * /agent4
+
     # Run the config script of the build agent
     echo "Configuring the Azure DevOps Agent"
 
@@ -62,6 +60,56 @@ setup_az_devops() {
     sudo ./svc.sh install
     sudo ./svc.sh start
 
+    cd /agent1
+
+    echo "Configuring the Azure DevOps Agent 1"
+
+    sudo -u LabUser ./config.sh --unattended --url "https://dev.azure.com/$URL" --auth pat --token "$PAT" --pool "$POOL" --agent "${AGENT}1" --acceptTeeEula --runAsService --replace
+
+    echo "About to start Azure DevOps Agent 1"
+
+    sudo ./svc.sh install
+    sudo ./svc.sh start
+
+    cd /agent2
+
+    echo "Configuring the Azure DevOps Agent 2"
+
+    sudo -u LabUser ./config.sh --unattended --url "https://dev.azure.com/$URL" --auth pat --token "$PAT" --pool "$POOL" --agent "${AGENT}2" --acceptTeeEula --runAsService --replace
+
+    echo "About to start Azure DevOps Agent 2"
+
+    sudo ./svc.sh install
+    sudo ./svc.sh start
+
+    cd /agent3
+
+    echo "Configuring the Azure DevOps Agent 3"
+
+    sudo -u LabUser ./config.sh --unattended --url "https://dev.azure.com/$URL" --auth pat --token "$PAT" --pool "$POOL" --agent "${AGENT}3" --acceptTeeEula --runAsService --replace
+
+    echo "About to start Azure DevOps Agent 3"
+
+    sudo ./svc.sh install
+    sudo ./svc.sh start
+
+    cd /agent4
+
+    echo "Configuring the Azure DevOps Agent 4"
+
+    sudo -u LabUser ./config.sh --unattended --url "https://dev.azure.com/$URL" --auth pat --token "$PAT" --pool "$POOL" --agent "${AGENT}4" --acceptTeeEula --runAsService --replace
+
+    echo "About to start Azure DevOps Agent 4"
+
+    sudo ./svc.sh install
+    sudo ./svc.sh start
+
+    sudo chown -R LabUser /agent/
+    sudo chown -R LabUser /agent1/
+    sudo chown -R LabUser /agent2/
+    sudo chown -R LabUser /agent3/
+    sudo chown -R LabUser /agent4/
+
     # installing other dependencies
     sudo apt-get install -y openjdk-11-jdk
 
@@ -71,15 +119,16 @@ setup_az_devops() {
 
     sudo apt install docker-ce -y
 
-    sudo -u LabUser curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    sudo apt-get install -y build-essential python3
+    # sudo -u LabUser curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 
-    export NVM_DIR="LabUser/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+    # export NVM_DIR="/home/LabUser/.nvm"
+    # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+    # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-    nvm install v20.11.0
+    # nvm install v20.11.0
 
-    npm install -g npm@6.14.4
+    # npm install -g npm@6.14.4
 
     sudo usermod -aG docker LabUser
 
