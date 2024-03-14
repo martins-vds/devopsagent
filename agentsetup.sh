@@ -21,27 +21,6 @@ setup_az_devops() {
     # Install JDK and Node.js
     sudo apt-get update
 
-    sudo apt-get install -y openjdk-11-jdk
-
-    sudo apt install apt-transport-https ca-certificates curl software-properties-common
-
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-
-    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-
-    apt-cache policy docker-ce -y
-
-    sudo apt install docker-ce -y
-
-    sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-
-    export NVM_DIR="$HOME/.nvm" 
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-    nvm install v20.11.1
-
-    sudo npm install -g npm@6.14.4
-
     echo "About to setup Azure DevOps Agent"
     azagentdir="/agent"
 
@@ -80,6 +59,25 @@ setup_az_devops() {
     sudo usermod -aG docker $USER
 
     newgrp docker
+
+    # installing other dependencies
+    sudo apt-get install -y openjdk-11-jdk
+
+    sudo apt install apt-transport-https ca-certificates curl software-properties-common
+
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+
+    apt-cache policy docker-ce -y
+
+    sudo apt install docker-ce -y
+
+    sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+
+    nvm install v20.11.0
+
+    npm install -g npm@6.14.4
 
 }
 
