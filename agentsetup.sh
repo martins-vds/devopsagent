@@ -45,11 +45,6 @@ setup_az_devops() {
     # Expand the tarball
     tar -zxvf agent.tar.gz
 
-    cp -r * /agent1
-    cp -r * /agent2
-    cp -r * /agent3
-    cp -r * /agent4
-
     # Run the config script of the build agent
     echo "Configuring the Azure DevOps Agent"
 
@@ -62,6 +57,16 @@ setup_az_devops() {
 
     cd /agent1
 
+    # Get the latest build agent version
+    echo "Downloading agent"
+    tag=$(curl -s https://api.github.com/repos/Microsoft/azure-pipelines-agent/releases/latest | grep tag_name | head -1 | sed -E 's/.*"v([^"]+)".*/\1/')
+    echo "$tag is the latest version"
+    download="https://vstsagentpackage.azureedge.net/agent/$tag/vsts-agent-linux-x64-$tag.tar.gz"
+    curl -L $download -o agent.tar.gz
+
+    # Expand the tarball
+    tar -zxvf agent.tar.gz
+
     echo "Configuring the Azure DevOps Agent 1"
 
     sudo -u LabUser ./config.sh --unattended --url "https://dev.azure.com/$URL" --auth pat --token "$PAT" --pool "$POOL" --agent "${AGENT}1" --acceptTeeEula --runAsService --replace
@@ -72,6 +77,16 @@ setup_az_devops() {
     sudo ./svc.sh start
 
     cd /agent2
+
+    # Get the latest build agent version
+    echo "Downloading agent"
+    tag=$(curl -s https://api.github.com/repos/Microsoft/azure-pipelines-agent/releases/latest | grep tag_name | head -1 | sed -E 's/.*"v([^"]+)".*/\1/')
+    echo "$tag is the latest version"
+    download="https://vstsagentpackage.azureedge.net/agent/$tag/vsts-agent-linux-x64-$tag.tar.gz"
+    curl -L $download -o agent.tar.gz
+
+    # Expand the tarball
+    tar -zxvf agent.tar.gz
 
     echo "Configuring the Azure DevOps Agent 2"
 
@@ -84,6 +99,16 @@ setup_az_devops() {
 
     cd /agent3
 
+    # Get the latest build agent version
+    echo "Downloading agent"
+    tag=$(curl -s https://api.github.com/repos/Microsoft/azure-pipelines-agent/releases/latest | grep tag_name | head -1 | sed -E 's/.*"v([^"]+)".*/\1/')
+    echo "$tag is the latest version"
+    download="https://vstsagentpackage.azureedge.net/agent/$tag/vsts-agent-linux-x64-$tag.tar.gz"
+    curl -L $download -o agent.tar.gz
+
+    # Expand the tarball
+    tar -zxvf agent.tar.gz
+
     echo "Configuring the Azure DevOps Agent 3"
 
     sudo -u LabUser ./config.sh --unattended --url "https://dev.azure.com/$URL" --auth pat --token "$PAT" --pool "$POOL" --agent "${AGENT}3" --acceptTeeEula --runAsService --replace
@@ -94,6 +119,16 @@ setup_az_devops() {
     sudo ./svc.sh start
 
     cd /agent4
+
+    # Get the latest build agent version
+    echo "Downloading agent"
+    tag=$(curl -s https://api.github.com/repos/Microsoft/azure-pipelines-agent/releases/latest | grep tag_name | head -1 | sed -E 's/.*"v([^"]+)".*/\1/')
+    echo "$tag is the latest version"
+    download="https://vstsagentpackage.azureedge.net/agent/$tag/vsts-agent-linux-x64-$tag.tar.gz"
+    curl -L $download -o agent.tar.gz
+
+    # Expand the tarball
+    tar -zxvf agent.tar.gz
 
     echo "Configuring the Azure DevOps Agent 4"
 
