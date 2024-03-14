@@ -45,10 +45,10 @@ setup_az_devops() {
     # Expand the tarball
     tar -zxvf agent.tar.gz
 
-    cp -rp * /agent1
-    cp -rp * /agent2
-    cp -rp * /agent3
-    cp -rp * /agent4
+    cp -r * /agent1
+    cp -r * /agent2
+    cp -r * /agent3
+    cp -r * /agent4
 
     # Run the config script of the build agent
     echo "Configuring the Azure DevOps Agent"
