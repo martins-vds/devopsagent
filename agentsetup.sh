@@ -24,9 +24,11 @@ setup_az_devops() {
     # installing other dependencies
     sudo apt-get install -y openjdk-17-jdk
 
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    
     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
 
-    apt-cache policy docker-ce -y
+    apt-cache policy docker-ce
 
     sudo apt install docker-ce -y
 
@@ -43,8 +45,6 @@ setup_az_devops() {
     newgrp docker
 
     sudo apt install apt-transport-https ca-certificates curl software-properties-common
-
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
    
     download="https://raw.githubusercontent.com/microsoft/GHAzDO-Resources/main/src/agent-setup/codeql-install-ubuntu.sh"
     curl -L $download -o codeql-install-ubuntu.sh
