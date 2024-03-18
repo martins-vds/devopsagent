@@ -28,6 +28,20 @@ setup_az_devops() {
 
     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
 
+    source /etc/os-release
+
+    wget -q https://packages.microsoft.com/config/ubuntu/$VERSION_ID/packages-microsoft-prod.deb
+
+    sudo apt-get update
+   
+    rm packages-microsoft-prod.deb
+
+    sudo dpkg -i packages-microsoft-prod.deb
+
+    sudo apt-get install -y powershell
+    
+    sudo apt-get install -y wget apt-transport-https software-properties-common
+
     apt-cache policy docker-ce
 
     sudo apt install docker-ce -y
