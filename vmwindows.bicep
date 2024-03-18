@@ -62,7 +62,7 @@ param CICDAgentType string='azuredevops'
 
 var AgentName = 'agent-${vmName}'
 
-param artifactsLocation string = 'https://raw.githubusercontent.com/RobertoBorges/devopsagent/linuxvr/agentsetup.sh'
+param artifactsLocation string = 'https://raw.githubusercontent.com/RobertoBorges/devopsagent/master/agentsetup.ps1'
 
 var nicName = 'myVMNic'
 var addressPrefix = '10.0.0.0/16'
