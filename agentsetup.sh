@@ -21,10 +21,38 @@ setup_az_devops() {
     # Install JDK and Node.js
     sudo apt-get update
 
+    # installing other dependencies
+    sudo apt-get install -y openjdk-17-jdk
+
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+
+    apt-cache policy docker-ce -y
+
+    sudo apt install docker-ce -y
+
+    sudo apt-get install -y build-essential python3
+
+    sudo usermod -aG docker LabUser
+
+    sudo apt install nodejs -y
+
+    sudo apt install npm -y
+
+    sudo apt  install jq -y
+
+    newgrp docker
+
     sudo apt install apt-transport-https ca-certificates curl software-properties-common
 
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+   
+    download="https://raw.githubusercontent.com/microsoft/GHAzDO-Resources/main/src/agent-setup/codeql-install-ubuntu.sh"
+    curl -L $download -o codeql-install-ubuntu.sh
 
+    sudo +x codeql-install-ubuntu.sh
+
+    ./codeql-install-ubuntu.sh
+    
     echo "About to setup Azure DevOps Agent"
 
     echo "Creating directory"
@@ -144,31 +172,6 @@ setup_az_devops() {
     sudo chown -R LabUser /agent2/
     sudo chown -R LabUser /agent3/
     sudo chown -R LabUser /agent4/
-
-    # installing other dependencies
-    sudo apt-get install -y openjdk-11-jdk
-
-    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-
-    apt-cache policy docker-ce -y
-
-    sudo apt install docker-ce -y
-
-    sudo apt-get install -y build-essential python3
-    # sudo -u LabUser curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-
-    # export NVM_DIR="/home/LabUser/.nvm"
-    # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-    # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-    # nvm install v20.11.0
-
-    # npm install -g npm@6.14.4
-
-    sudo usermod -aG docker LabUser
-
-    newgrp docker
-
 }
 
 echo "Parameters: URL=$URL, PAT=$PAT, POOL=$POOL, AGENT=$AGENT, AGENTTYPE=$AGENTTYPE"
