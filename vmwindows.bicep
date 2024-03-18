@@ -28,9 +28,9 @@ param publicIpSku string = 'Basic'
 
 @description('The Windows version for the VM. This will pick a fully patched image of this given Windows version.')
 @allowed([
-  'vs-2022-ent-latest-ws2022'
+  '20_04-lts-gen2'
 ])
-param OSVersion string = 'vs-2022-ent-latest-ws2022'
+param OSVersion string = '20_04-lts-gen2'
 
 @description('Size of the virtual machine.')
 param vmSize string = 'Standard_D4s_v3'
@@ -62,7 +62,7 @@ param CICDAgentType string='azuredevops'
 
 var AgentName = 'agent-${vmName}'
 
-param artifactsLocation string = 'https://raw.githubusercontent.com/RobertoBorges/devopsagent/master/agentsetup.ps1'
+param artifactsLocation string = 'https://raw.githubusercontent.com/RobertoBorges/devopsagent/linuxvr/agentsetup.sh'
 
 var nicName = 'myVMNic'
 var addressPrefix = '10.0.0.0/16'
@@ -91,12 +91,12 @@ resource securityGroup 'Microsoft.Network/networkSecurityGroups@2021-02-01' = {
   properties: {
     securityRules: [
       {
-        name: 'default-allow-3389'
+        name: 'default-allow-22'
         properties: {
           priority: 1000
           access: 'Allow'
           direction: 'Inbound'
-          destinationPortRange: '3389'
+          destinationPortRange: '22'
           protocol: 'Tcp'
           sourcePortRange: '*'
           sourceAddressPrefix: '*'
@@ -165,8 +165,8 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
     }
     storageProfile: {
       imageReference: {
-        publisher: 'microsoftvisualstudio'
-        offer: 'visualstudio2022'
+        publisher: 'canonical'
+        offer: '0001-com-ubuntu-server-focal'
         sku: OSVersion
         version: 'latest'
       }
@@ -175,6 +175,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
         managedDisk: {
           storageAccountType: 'StandardSSD_LRS'
         }
+        diskSizeGB: 256
       }
       dataDisks: [
         {
@@ -205,16 +206,21 @@ resource vm_CustomScript 'Microsoft.Compute/virtualMachines/extensions@2021-04-0
   name: 'CustomScript'
   location: location
   properties: {
-    publisher: 'Microsoft.Compute'
-    type: 'CustomScriptExtension'
-    typeHandlerVersion: '1.10'
+    publisher: 'Microsoft.Azure.Extensions'
+    type: 'CustomScript'
+    typeHandlerVersion: '2.1'
+    autoUpgradeMinorVersion: true
     settings: {
+      skipDos2Unix: false
       fileUris: [
         artifactsLocation
       ]   
     }
     protectedSettings: {
-      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -Command ./agentsetup.ps1 -url ${accountName} -pat ${personalAccessToken} -agent ${AgentName} -pool ${poolName} -agenttype ${CICDAgentType} '
+      fileUris: [
+        artifactsLocation
+      ]               
+      commandToExecute: 'chmod +x agentsetup.sh | ./agentsetup.sh ${accountName} ${personalAccessToken} ${poolName} ${AgentName} ${CICDAgentType} '
     }
   }
 }
