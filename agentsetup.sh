@@ -39,7 +39,7 @@ setup_az_devops() {
     sudo dpkg -i packages-microsoft-prod.deb
 
     sudo apt-get install -y powershell
-    
+
     sudo apt-get install -y wget apt-transport-https software-properties-common
 
     apt-cache policy docker-ce
@@ -199,30 +199,40 @@ setup_az_devops() {
     curl -L $download -o agentql.tar.gz
     tar -zxvf agentql.tar.gz
 
+    sudo mkdir /agent/_work/
+    sudo mkdir /agent/_work/_tool/
     sudo mkdir /agent/_work/_tool/CodeQL/
     sudo mkdir /agent/_work/_tool/CodeQL/0.0.0-$tag/
     sudo mkdir /agent/_work/_tool/CodeQL/0.0.0-$tag/x64/
     sudo touch /agent/_work/_tool/CodeQL/0.0.0-$tag/x64.complete
     sudo cp -r ./* /agent/_work/_tool/CodeQL/0.0.0-$tag/x64
 
+    sudo mkdir /agent1/_work/
+    sudo mkdir /agent1/_work/_tool
     sudo mkdir /agent1/_work/_tool/CodeQL/
     sudo mkdir /agent1/_work/_tool/CodeQL/0.0.0-$tag/
     sudo mkdir /agent1/_work/_tool/CodeQL/0.0.0-$tag/x64/
     sudo touch /agent1/_work/_tool/CodeQL/0.0.0-$tag/x64.complete
     sudo cp -r ./* /agent1/_work/_tool/CodeQL/0.0.0-$tag/x64
 
+    sudo mkdir /agent2/_work/
+    sudo mkdir /agent2/_work/_tool/
     sudo mkdir /agent2/_work/_tool/CodeQL/
     sudo mkdir /agent2/_work/_tool/CodeQL/0.0.0-$tag/
     sudo mkdir /agent2/_work/_tool/CodeQL/0.0.0-$tag/x64/
     sudo touch /agent2/_work/_tool/CodeQL/0.0.0-$tag/x64.complete
     sudo cp -r ./* /agent2/_work/_tool/CodeQL/0.0.0-$tag/x64
 
+    sudo mkdir /agent3/_work/
+    sudo mkdir /agent3/_work/_tool/
     sudo mkdir /agent3/_work/_tool/CodeQL/
     sudo mkdir /agent3/_work/_tool/CodeQL/0.0.0-$tag/
     sudo mkdir /agent3/_work/_tool/CodeQL/0.0.0-$tag/x64/
     sudo touch /agent3/_work/_tool/CodeQL/0.0.0-$tag/x64.complete
     sudo cp -r ./* /agent3/_work/_tool/CodeQL/0.0.0-$tag/x64
 
+    sudo mkdir /agent4/_work/
+    sudo mkdir /agent4/_work/_tool/
     sudo mkdir /agent4/_work/_tool/CodeQL/
     sudo mkdir /agent4/_work/_tool/CodeQL/0.0.0-$tag/
     sudo mkdir /agent4/_work/_tool/CodeQL/0.0.0-$tag/x64/
