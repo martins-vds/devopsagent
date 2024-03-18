@@ -25,7 +25,7 @@ setup_az_devops() {
     sudo apt-get install -y openjdk-17-jdk
 
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    
+
     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
 
     apt-cache policy docker-ce
@@ -36,6 +36,8 @@ setup_az_devops() {
 
     sudo usermod -aG docker LabUser
 
+    curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
+    
     sudo apt install nodejs -y
 
     sudo apt install npm -y
@@ -172,6 +174,47 @@ setup_az_devops() {
     sudo chown -R LabUser /agent2/
     sudo chown -R LabUser /agent3/
     sudo chown -R LabUser /agent4/
+
+    echo "Installing CodeQL"
+    
+    cd ~
+
+    tag=$(curl -s https://api.github.com/repos/github/codeql-action/releases/latest | grep tag_name | head -1 | sed -E 's/.*"codeql-bundle-([^"]+)".*/\1/')
+    download="https://github.com/github/codeql-action/releases/download/codeql-bundle-$tag/codeql-bundle-linux64.tar.gz"
+    echo "$tag is the latest version"
+    curl -L $download -o agentql.tar.gz
+    tar -zxvf agentql.tar.gz
+
+    sudo mkdir /agent/_work/_tool/CodeQL/
+    sudo mkdir /agent/_work/_tool/CodeQL/0.0.0-$tag/
+    sudo mkdir /agent/_work/_tool/CodeQL/0.0.0-$tag/x64/
+    sudo touch /agent/_work/_tool/CodeQL/0.0.0-$tag/x64.complete
+    sudo cp -r ./* /agent/_work/_tool/CodeQL/0.0.0-$tag/x64
+
+    sudo mkdir /agent1/_work/_tool/CodeQL/
+    sudo mkdir /agent1/_work/_tool/CodeQL/0.0.0-$tag/
+    sudo mkdir /agent1/_work/_tool/CodeQL/0.0.0-$tag/x64/
+    sudo touch /agent1/_work/_tool/CodeQL/0.0.0-$tag/x64.complete
+    sudo cp -r ./* /agent1/_work/_tool/CodeQL/0.0.0-$tag/x64
+
+    sudo mkdir /agent2/_work/_tool/CodeQL/
+    sudo mkdir /agent2/_work/_tool/CodeQL/0.0.0-$tag/
+    sudo mkdir /agent2/_work/_tool/CodeQL/0.0.0-$tag/x64/
+    sudo touch /agent2/_work/_tool/CodeQL/0.0.0-$tag/x64.complete
+    sudo cp -r ./* /agent2/_work/_tool/CodeQL/0.0.0-$tag/x64
+
+    sudo mkdir /agent3/_work/_tool/CodeQL/
+    sudo mkdir /agent3/_work/_tool/CodeQL/0.0.0-$tag/
+    sudo mkdir /agent3/_work/_tool/CodeQL/0.0.0-$tag/x64/
+    sudo touch /agent3/_work/_tool/CodeQL/0.0.0-$tag/x64.complete
+    sudo cp -r ./* /agent3/_work/_tool/CodeQL/0.0.0-$tag/x64
+
+    sudo mkdir /agent4/_work/_tool/CodeQL/
+    sudo mkdir /agent4/_work/_tool/CodeQL/0.0.0-$tag/
+    sudo mkdir /agent4/_work/_tool/CodeQL/0.0.0-$tag/x64/
+    sudo touch /agent4/_work/_tool/CodeQL/0.0.0-$tag/x64.complete
+    sudo cp -r ./* /agent4/_work/_tool/CodeQL/0.0.0-$tag/x64    
+
 }
 
 echo "Parameters: URL=$URL, PAT=$PAT, POOL=$POOL, AGENT=$AGENT, AGENTTYPE=$AGENTTYPE"
