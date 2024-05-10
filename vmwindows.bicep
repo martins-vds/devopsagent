@@ -67,7 +67,7 @@ var virtualNetworkName = 'MyVNET-${vmNameWithOs}'
 var networkSecurityGroupName = 'default-NSG-${vmNameWithOs}'
 var publicIpName = 'myPublicIP-${vmNameWithOs}'
 
-var dnsLabelPrefix = toLower('${vmNameWithOs}-${uniqueString(resourceGroup().id, vmNameWithOs)}')
+var dnsLabelPrefix = toLower('${vmName}-${uniqueString(resourceGroup().id, vmName)}')
 
 var osSettings = {
   linux: {
