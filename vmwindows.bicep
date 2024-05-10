@@ -79,6 +79,12 @@ var osSettings = {
     }
     script: {
       file: 'https://raw.githubusercontent.com/martins-vds/devopsagent/master/agentsetup.sh'
+      settings: {
+        skipDos2Unix: false
+        fileUris: [
+          'https://raw.githubusercontent.com/martins-vds/devopsagent/master/agentsetup.sh'
+        ]
+      }
       command: 'chmod +x agentsetup.sh | ./agentsetup.sh ${accountName} ${personalAccessToken} ${poolName} ${agentName} ${CICDAgentType} '
     }
   }
@@ -91,6 +97,7 @@ var osSettings = {
     }
     script: {
       file: 'https://raw.githubusercontent.com/martins-vds/devopsagent/master/agentsetup.ps1'
+      settings: {}
       command: 'powershell -ExecutionPolicy Unrestricted -File agentsetup.ps1 -URL ${accountName} -PAT ${personalAccessToken} -POOL ${poolName} -AGENT ${agentName} -AGENTTYPE ${CICDAgentType}'
     }
   }
@@ -230,12 +237,7 @@ resource vm_CustomScript 'Microsoft.Compute/virtualMachines/extensions@2021-04-0
     type: (os == 'linux' ? 'CustomScript' : 'CustomScriptExtension')
     typeHandlerVersion: (os == 'linux' ? '2.1' : '1.10')
     autoUpgradeMinorVersion: true
-    settings: {
-      skipDos2Unix: false
-      fileUris: [
-        osSettings[os].script.file
-      ]
-    }
+    settings: osSettings[os].script.settings
     protectedSettings: {
       fileUris: [
         osSettings[os].script.file
