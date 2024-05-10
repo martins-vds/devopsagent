@@ -6,9 +6,6 @@ param adminUsername string
 @secure()
 param adminPassword string
 
-@description('Unique DNS Name for the Public IP used to access the Virtual Machine.')
-param dnsLabelPrefix string = toLower('${vmNameWithOs}-${uniqueString(resourceGroup().id, vmNameWithOs)}')
-
 @description('Name for the Public IP used to access the Virtual Machine.')
 param publicIpName string = 'myPublicIP'
 
@@ -64,10 +61,7 @@ param CICDAgentType string = 'azuredevops'
 param os string = 'linux'
 
 var vmNameWithOs = '${vmName}-${os}'
-var AgentName = 'agent-${vmNameWithOs}'
-
-param artifactsLocation string = 'https://raw.githubusercontent.com/RobertoBorges/devopsagent/master/agentsetup.sh'
-
+var agentName = 'agent-${vmNameWithOs}'
 var nicName = 'myVMNic'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
@@ -75,30 +69,32 @@ var subnetPrefix = '10.0.0.0/24'
 var virtualNetworkName = 'MyVNET'
 var networkSecurityGroupName = 'default-NSG'
 
+var dnsLabelPrefix = toLower('${vmNameWithOs}-${uniqueString(resourceGroup().id, vmNameWithOs)}')
+
 var osSettings = {
   linux: {
     image: {
-        publisher: 'canonical'
-        offer: '0001-com-ubuntu-server-focal'
-        sku: OSVersion
-        version: 'latest'
-      }
-      script: {
-        file: 'https://raw.githubusercontent.com/RobertoBorges/devopsagent/master/agentsetup.sh'
-        args: ''
-      }
+      publisher: 'canonical'
+      offer: '0001-com-ubuntu-server-focal'
+      sku: OSVersion
+      version: 'latest'
+    }
+    script: {
+      file: 'https://raw.githubusercontent.com/martins-vds/devopsagent/master/agentsetup.sh'
+      command: 'chmod +x agentsetup.sh | ./agentsetup.sh ${accountName} ${personalAccessToken} ${poolName} ${agentName} ${CICDAgentType} '
+    }
   }
   windows: {
     image: {
-                        publisher: 'MicrosoftWindowsServer',
-                        offer: 'WindowsServer',
-                        sku: '2022-datacenter-azure-edition',
-                        version: 'latest'
-                    }
-                    script: {
-        file: 'https://raw.githubusercontent.com/RobertoBorges/devopsagent/master/agentsetup.sh'
-        args: ''
-      }
+      publisher: 'MicrosoftWindowsServer'
+      offer: 'WindowsServer'
+      sku: '2022-datacenter-azure-edition'
+      version: 'latest'
+    }
+    script: {
+      file: 'https://raw.githubusercontent.com/martins-vds/devopsagent/master/agentsetup.ps1'
+      command: 'powershell -ExecutionPolicy Unrestricted -File agentsetup.ps1 -URL ${accountName} -PAT ${personalAccessToken} -POOL ${poolName} -AGENT ${agentName} -AGENTTYPE ${CICDAgentType}'
+    }
   }
 }
 
@@ -195,7 +191,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
       adminPassword: adminPassword
     }
     storageProfile: {
-      imageReference: osImage[os]
+      imageReference: osSettings[os].image
       osDisk: {
         createOption: 'FromImage'
         managedDisk: {
@@ -239,14 +235,14 @@ resource vm_CustomScript 'Microsoft.Compute/virtualMachines/extensions@2021-04-0
     settings: {
       skipDos2Unix: false
       fileUris: [
-        artifactsLocation
+        osSettings[os].script.file
       ]
     }
     protectedSettings: {
       fileUris: [
-        artifactsLocation
+        osSettings[os].script.file
       ]
-      commandToExecute: 'chmod +x agentsetup.sh | ./agentsetup.sh ${accountName} ${personalAccessToken} ${poolName} ${AgentName} ${CICDAgentType} '
+      commandToExecute: osSettings[os].script.command
     }
   }
 }
