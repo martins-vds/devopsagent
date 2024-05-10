@@ -6,9 +6,6 @@ param adminUsername string
 @secure()
 param adminPassword string
 
-@description('Name for the Public IP used to access the Virtual Machine.')
-param publicIpName string = 'myPublicIP'
-
 @description('Allocation method for the Public IP used to access the Virtual Machine.')
 @allowed([
   'Dynamic'
@@ -62,12 +59,13 @@ param os string = 'linux'
 
 var vmNameWithOs = '${vmName}-${os}'
 var agentName = 'agent-${vmNameWithOs}'
-var nicName = 'myVMNic'
+var nicName = 'myVMNic-${vmNameWithOs}'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
-var virtualNetworkName = 'MyVNET'
-var networkSecurityGroupName = 'default-NSG'
+var virtualNetworkName = 'MyVNET-${vmNameWithOs}'
+var networkSecurityGroupName = 'default-NSG-${vmNameWithOs}'
+var publicIpName = 'myPublicIP-${vmNameWithOs}'
 
 var dnsLabelPrefix = toLower('${vmNameWithOs}-${uniqueString(resourceGroup().id, vmNameWithOs)}')
 
