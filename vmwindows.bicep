@@ -7,7 +7,7 @@ param adminUsername string
 param adminPassword string
 
 @description('Unique DNS Name for the Public IP used to access the Virtual Machine.')
-param dnsLabelPrefix string = toLower('${vmName}-${uniqueString(resourceGroup().id, vmName)}')
+param dnsLabelPrefix string = toLower('${vmNameWithOs}-${uniqueString(resourceGroup().id, vmNameWithOs)}')
 
 @description('Name for the Public IP used to access the Virtual Machine.')
 param publicIpName string = 'myPublicIP'
@@ -42,14 +42,14 @@ param location string = resourceGroup().location
 param vmName string = 'devopsagent'
 
 @description('Indicator to guide whether the CI/CD agent script should be run or not')
-param deployAgent bool=true
+param deployAgent bool = true
 
 @description('The Azure DevOps or GitHub account name')
-param accountName string=''
+param accountName string = ''
 
 @description('The personal access token to connect to Azure DevOps or Github')
 @secure()
-param personalAccessToken string=''
+param personalAccessToken string = ''
 
 @description('The name Azure DevOps or GitHub pool for this build agent to join. Use \'Default\' if you don\'t have a separate pool.')
 param poolName string = 'Default'
@@ -58,9 +58,13 @@ param poolName string = 'Default'
 @allowed([
   'azuredevops'
 ])
-param CICDAgentType string='azuredevops'
+param CICDAgentType string = 'azuredevops'
 
-var AgentName = 'agent-${vmName}'
+@allowed(['linux', 'windows'])
+param os string = 'linux'
+
+var vmNameWithOs = '${vmName}-${os}'
+var AgentName = 'agent-${vmNameWithOs}'
 
 param artifactsLocation string = 'https://raw.githubusercontent.com/RobertoBorges/devopsagent/master/agentsetup.sh'
 
@@ -70,6 +74,33 @@ var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
 var virtualNetworkName = 'MyVNET'
 var networkSecurityGroupName = 'default-NSG'
+
+var osSettings = {
+  linux: {
+    image: {
+        publisher: 'canonical'
+        offer: '0001-com-ubuntu-server-focal'
+        sku: OSVersion
+        version: 'latest'
+      }
+      script: {
+        file: 'https://raw.githubusercontent.com/RobertoBorges/devopsagent/master/agentsetup.sh'
+        args: ''
+      }
+  }
+  windows: {
+    image: {
+                        publisher: 'MicrosoftWindowsServer',
+                        offer: 'WindowsServer',
+                        sku: '2022-datacenter-azure-edition',
+                        version: 'latest'
+                    }
+                    script: {
+        file: 'https://raw.githubusercontent.com/RobertoBorges/devopsagent/master/agentsetup.sh'
+        args: ''
+      }
+  }
+}
 
 resource pip 'Microsoft.Network/publicIPAddresses@2021-02-01' = {
   name: publicIpName
@@ -152,24 +183,19 @@ resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
 }
 
 resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
-  name: vmName
+  name: vmNameWithOs
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmNameWithOs
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
     storageProfile: {
-      imageReference: {
-        publisher: 'canonical'
-        offer: '0001-com-ubuntu-server-focal'
-        sku: OSVersion
-        version: 'latest'
-      }
+      imageReference: osImage[os]
       osDisk: {
         createOption: 'FromImage'
         managedDisk: {
@@ -214,12 +240,12 @@ resource vm_CustomScript 'Microsoft.Compute/virtualMachines/extensions@2021-04-0
       skipDos2Unix: false
       fileUris: [
         artifactsLocation
-      ]   
+      ]
     }
     protectedSettings: {
       fileUris: [
         artifactsLocation
-      ]               
+      ]
       commandToExecute: 'chmod +x agentsetup.sh | ./agentsetup.sh ${accountName} ${personalAccessToken} ${poolName} ${AgentName} ${CICDAgentType} '
     }
   }
@@ -227,6 +253,5 @@ resource vm_CustomScript 'Microsoft.Compute/virtualMachines/extensions@2021-04-0
 
 // outputs
 output id string = vm.id
-
 
 output hostname string = pip.properties.dnsSettings.fqdn
