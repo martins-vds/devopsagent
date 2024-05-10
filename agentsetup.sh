@@ -33,7 +33,7 @@ setup_az_devops() {
     wget -q https://packages.microsoft.com/config/ubuntu/$VERSION_ID/packages-microsoft-prod.deb
 
     sudo apt-get update
-   
+
     rm packages-microsoft-prod.deb
 
     sudo dpkg -i packages-microsoft-prod.deb
@@ -51,24 +51,24 @@ setup_az_devops() {
     sudo usermod -aG docker LabUser
 
     curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
-    
+
     sudo apt install nodejs -y
 
     sudo apt install npm -y
 
-    sudo apt  install jq -y
+    sudo apt install jq -y
 
     newgrp docker
 
     sudo apt install apt-transport-https ca-certificates curl software-properties-common
-   
+
     download="https://raw.githubusercontent.com/microsoft/GHAzDO-Resources/main/src/agent-setup/codeql-install-ubuntu.sh"
     curl -L $download -o codeql-install-ubuntu.sh
 
     sudo +x codeql-install-ubuntu.sh
 
     ./codeql-install-ubuntu.sh
-    
+
     echo "About to setup Azure DevOps Agent"
 
     echo "Creating directory"
@@ -76,7 +76,7 @@ setup_az_devops() {
     sudo mkdir -p "/agent1"
     sudo mkdir -p "/agent2"
     sudo mkdir -p "/agent3"
-    sudo mkdir -p "/agent4"                
+    sudo mkdir -p "/agent4"
     cd "/agent"
 
     # Get the latest build agent version
@@ -190,7 +190,7 @@ setup_az_devops() {
     sudo chown -R LabUser /agent4/
 
     echo "Installing CodeQL"
-    
+
     cd ~
 
     tag=$(curl -s https://api.github.com/repos/github/codeql-action/releases/latest | grep tag_name | head -1 | sed -E 's/.*"codeql-bundle-([^"]+)".*/\1/')
@@ -237,7 +237,7 @@ setup_az_devops() {
     sudo mkdir /agent4/_work/_tool/CodeQL/0.0.0-$tag/
     sudo mkdir /agent4/_work/_tool/CodeQL/0.0.0-$tag/x64/
     sudo touch /agent4/_work/_tool/CodeQL/0.0.0-$tag/x64.complete
-    sudo cp -r ./* /agent4/_work/_tool/CodeQL/0.0.0-$tag/x64    
+    sudo cp -r ./* /agent4/_work/_tool/CodeQL/0.0.0-$tag/x64
 
 }
 

@@ -6,7 +6,7 @@ param (
     [string]$AGENTTYPE
 )
 
-function setupazdevops{
+function setupazdevops {
     param(
         [string]$URL,
         [string]$PAT,
@@ -33,15 +33,14 @@ function setupazdevops{
 
     Write-Host "About to setup Azure DevOps Agent"
 
-    $azagentdir="c:\agent"
+    $azagentdir = "c:\agent"
     
     #test if an old installation exists, if so, delete the folder
-    if (test-path $azagentdir)
-    {
+    if (test-path $azagentdir) {
         
         Write-Host "clean out old directory"
         set-location $azagentdir
-        $servicename=(Get-Content .service)
+        $servicename = (Get-Content .service)
         Stop-Service $servicename -ErrorAction SilentlyContinue
         set-location 'c:\'
         Remove-Item -Path $azagentdir -Force -Confirm:$false -Recurse
@@ -80,7 +79,7 @@ function setupazdevops{
     
     Write-Host "About to start Azure DevOps Agent"
     set-location $azagentdir
-    $servicename=(Get-Content .service)
+    $servicename = (Get-Content .service)
     Start-Service $servicename -ErrorAction SilentlyContinue
 
     #exit
@@ -100,56 +99,51 @@ function setupghrunner {
     Start-Transcript
 
     Write-Host "About to setup GitHub Runner"
-    $ghrunnerdirectory="c:\actions-runner"
+    $ghrunnerdirectory = "c:\actions-runner"
 
+    #test if an old installation exists, if so, delete the folder
+    if (test-path $ghrunnerdirectory) {
+        set-location $ghrunnerdirectory
+        $servicename = (Get-Content .service)
+        Stop-Service $servicename -ErrorAction SilentlyContinue
+        set-location 'c:\'
+        Remove-Item -Path $ghrunnerdirectory -Force -Confirm:$false -Recurse
+    }
 
-#test if an old installation exists, if so, delete the folder
-if (test-path $ghrunnerdirectory)
-{
+    #create a new folder
+    new-item -ItemType Directory -Force -Path $ghrunnerdirectory
     set-location $ghrunnerdirectory
-    $servicename=(Get-Content .service)
-    Stop-Service $servicename -ErrorAction SilentlyContinue
-    set-location 'c:\'
-    Remove-Item -Path $ghrunnerdirectory -Force -Confirm:$false -Recurse
-}
+    $global:ProgressPreference = 'SilentlyContinue'
+    $env:VSTS_AGENT_HTTPTRACE = $true
 
-#create a new folder
-new-item -ItemType Directory -Force -Path $ghrunnerdirectory
-set-location $ghrunnerdirectory
-$global:ProgressPreference = 'SilentlyContinue'
-$env:VSTS_AGENT_HTTPTRACE = $true
+    #github requires tls 1.2
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-#github requires tls 1.2
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $ProgressPreference = 'SilentlyContinue'
+    #get the latest build agent version
+    $wr = Invoke-WebRequest https://api.github.com/repos/actions/runner/releases/latest -UseBasicParsing
+    $tag = ($wr | ConvertFrom-Json)[0].tag_name
+    $tag = $tag.Substring(1)
 
-$ProgressPreference = 'SilentlyContinue'
-#get the latest build agent version
-$wr = Invoke-WebRequest https://api.github.com/repos/actions/runner/releases/latest -UseBasicParsing
-$tag = ($wr | ConvertFrom-Json)[0].tag_name
-$tag = $tag.Substring(1)
+    write-host "$tag is the latest version"
+    #build the url
 
-write-host "$tag is the latest version"
-#build the url
+    $download = "https://github.com/actions/runner/releases/download/v$tag/actions-runner-win-x64-$tag.zip"
 
-$download = "https://github.com/actions/runner/releases/download/v$tag/actions-runner-win-x64-$tag.zip"
+    #download the agent
+    Invoke-WebRequest $download -Out ghactionsrunner.zip
 
-#download the agent
-Invoke-WebRequest $download -Out ghactionsrunner.zip
-
-#expand the zip
-Expand-Archive -Path ghactionsrunner.zip -DestinationPath $PWD
+    #expand the zip
+    Expand-Archive -Path ghactionsrunner.zip -DestinationPath $PWD
 
 
-#run the config script of the build agent
-set-location $ghrunnerdirectory
-.\config.cmd --unattended --url https://github.com/$URL  --token "$PAT"  --runnergroup $POOL  --replace --runasservice --replace
+    #run the config script of the build agent
+    set-location $ghrunnerdirectory
+    .\config.cmd --unattended --url https://github.com/$URL  --token "$PAT"  --runnergroup $POOL  --replace --runasservice --replace
 
-
-
-#exit
-Stop-Transcript
-exit 0
-
+    #exit
+    Stop-Transcript
+    exit 0
 }
 
 Write-Output $URL
@@ -160,12 +154,9 @@ Write-Output $AGENTTYPE
 
 $ProgressPreference = 'SilentlyContinue'; [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
 
-if ($AGENTTYPE.ToLower() -eq "azuredevops")
-{
+if ($AGENTTYPE.ToLower() -eq "azuredevops") {
     setupazdevops -URL $URL -PAT $PAT -POOL $POOL -AGENT $AGENT
 }
-
-else
- {
+else {
     setupghrunner -URL $URL -PAT $PAT -POOL $POOL -AGENT $AGENT
 }
