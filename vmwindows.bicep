@@ -184,7 +184,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmNameWithOs
+      computerName: replace(vmNameWithOs, '-', '')
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
